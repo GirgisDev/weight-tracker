@@ -1,8 +1,8 @@
-import './App.css';
+import './common-styles/_styles.scss';
 
 function App() {
   return (
-    <div className="App">
+    <div>
       Weight Tracker App
     </div>
   );
