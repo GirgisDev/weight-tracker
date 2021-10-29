@@ -55,14 +55,14 @@
       cursor: initial;
     }
   }
+  &--uppercase {
+    text-transform: uppercase;
+  }
   &--block {
     width: 100%;
     max-width: 100%;
     margin-left: 0;
     margin-right: 0;
-  }
-  &--uppercase {
-    text-transform: uppercase;
   }
   &--sm {
     min-width: 78px;

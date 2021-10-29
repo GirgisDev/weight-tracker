@@ -1,0 +1,14 @@
+.add-edit-weight {
+  width: 400px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__actions {
+    display: flex;
+    column-gap: 20px;
+    position: sticky;
+    bottom: 0;
+    top: 100%;
+  }
+}
