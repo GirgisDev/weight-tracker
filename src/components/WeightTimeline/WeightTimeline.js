@@ -1,29 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import style from './WeightTimeline.module.scss';
 import LineChart from './../../common/LineChart/LineChart';
 import SlideFromRightLayout from '../../common/SlideFromRightLayout/SlideFromRightLayout';
 import AddEditWeight from './components/AddEditWeight/AddEditWeight';
 
 const WeightTimeline = () => {
-  const defaultOptions = {
+  const storageKeyName = 'weight-data';
+
+  const getUserData = () => JSON.parse(localStorage.getItem(storageKeyName) || '{}');
+
+  const getWeightDates = () => Object.keys(getUserData()).length 
+    ? Object.keys(getUserData()).map(key => new Date(parseInt(key)).toLocaleDateString()) 
+    : [];
+  const getWeights = () => Object.keys(getUserData()).length 
+    ? Object.keys(getUserData()).map(key => getUserData()[key]) 
+    : [];
+
+  const getWeightChartOptions = () => ({
     chart: { id: "weight-timeline" },
-    xaxis: {
-      categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999]
-    }
-  };
-  const defaultSeries = [{
-    name: 'Weight in KG', data: [
-      30, 40, 45, 50, 49, 60, 70, 91
-    ]
-  }]
-  const [weightData, setWeightData] = useState(null);
+    xaxis: { categories: getWeightDates() }
+  })
+  const getWeightChartSeries = () => ([{
+    name: 'Weight in KG', data: getWeights()
+  }])
+  const [weightChartOptions, setWeightChartOptions] = useState(getWeightChartOptions());
+  const [weightChartSeries, setWeightChartSeries] = useState(getWeightChartSeries());
+
   const [weight, setWeight] = useState(false);
   const [date, setDate] = useState(false);
   const [addEdit, toggleAddEdit] = useState(false);
 
-  useEffect(() => {
-    if (!weightData) setWeightData({});
-  }, [weightData]);
+  const sortObj = obj => {
+    return Object.keys(obj).sort().reduce(function (result, key) {
+      result[key] = obj[key];
+      return result;
+    }, {});
+  }
+
+  const updateChart = () => {
+    setWeightChartOptions(getWeightChartOptions());
+    setWeightChartSeries(getWeightChartSeries());
+  }
+
+  const resetInputFields = () => {
+    setDate('');
+    setWeight('');
+  }
+
+  const addWeight = () => {
+    const updatedData = sortObj({ ...getUserData(), [new Date(date).getTime()]: weight });
+    localStorage.setItem(storageKeyName, JSON.stringify(updatedData));
+
+    updateChart();
+    toggleAddEdit(false);
+    resetInputFields();
+  }
 
   return (
     <div className={style['weight-timeline']}>
@@ -31,8 +62,8 @@ const WeightTimeline = () => {
       <LineChart
         width={'100%'}
         height={'400px'}
-        options={defaultOptions}
-        series={defaultSeries} />
+        options={weightChartOptions}
+        series={weightChartSeries} />
 
       <button
         onClick={() => toggleAddEdit(true)}
@@ -43,7 +74,7 @@ const WeightTimeline = () => {
           <AddEditWeight 
             weight={weight} setWeight={setWeight}
             date={date} setDate={setDate}
-            updateFN={() => false} cancelFN={() => toggleAddEdit(false)} />
+            updateFN={addWeight} cancelFN={() => toggleAddEdit(false)} />
         </SlideFromRightLayout>
       )}
     </div>
