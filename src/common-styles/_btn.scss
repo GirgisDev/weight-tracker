@@ -1,0 +1,80 @@
+.btn {
+  min-width: 103px;
+  max-width: max-content;
+  height: 48px;
+  text-align: center;
+  line-height: 48px;
+  display: inline-block;
+  padding: 0 24px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.12);
+  border: none;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+
+  &--primary {
+    color: white;
+    background: #3498db;
+
+    &:hover {
+      color: white;
+    }
+    &-disabled {
+      background-color: #95a5a6;
+      color: #FFF;
+      cursor: initial;
+    }
+  }
+  &--danger {
+    color: white;
+    background: #e74c3c;
+
+    &:hover {
+      color: white;
+    }
+    &-disabled {
+      background-color: rgba(220, 69, 68, 0.16);
+      color: #FFF;
+      cursor: initial;
+    }
+  }
+  &--secondary {
+    color: #34495e;
+    background: white;
+    
+    &:hover {
+      color: #2c3e50;
+    }
+    &-disabled {
+      color: #7f8487;
+      cursor: initial;
+    }
+  }
+  &--block {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  &--uppercase {
+    text-transform: uppercase;
+  }
+  &--sm {
+    min-width: 78px;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 16px;
+    flex: none;
+  }
+  &--lg {
+    min-width: 112px;
+    height: 56px;
+    line-height: 56px;
+    padding: 0 32px;
+  }
+}
