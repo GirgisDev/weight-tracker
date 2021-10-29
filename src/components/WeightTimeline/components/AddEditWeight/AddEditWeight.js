@@ -3,6 +3,12 @@ import style from './AddEditWeight.module.scss';
 
 const AddEditWeight = (props) => {
   const { weight, setWeight, date, setDate, updateFN, cancelFN } = props;
+
+  const maxDate = () => {
+    let date = new Date();
+    return date.toISOString().substring(0, 10)
+  }
+
   return (
     <form className={style['add-edit-weight']}>
       <div className="form-group">
@@ -12,6 +18,7 @@ const AddEditWeight = (props) => {
           name="date" id="date"
           placeholder="Date of weight"
           value={date}
+          max={maxDate()}
           onInput={e => setDate(e.target.value)} />
         <label htmlFor="date" className="form-group__label">Date</label>
       </div>
