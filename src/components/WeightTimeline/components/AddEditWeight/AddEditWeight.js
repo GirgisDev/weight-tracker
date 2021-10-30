@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import style from './AddEditWeight.module.scss';
 
 const AddEditWeight = (props) => {
-  const { weight, setWeight, date, setDate, updateFN, cancelFN } = props;
+  const { currentData, weight, setWeight, date, setDate, updateFN, deleteFN, cancelFN } = props;
+  const [alreadyExists, toggleAlreadyExists] = useState(false);
 
   const maxDate = () => {
     let date = new Date();
     return date.toISOString().substring(0, 10)
+  }
+
+  const checkIfExists = val => {
+    const enteredFormattedVal = new Date(val).toLocaleDateString();
+    if (currentData[enteredFormattedVal]) {
+      setWeight(currentData[enteredFormattedVal]);
+      toggleAlreadyExists(true);
+    } else {
+      setWeight('');
+      toggleAlreadyExists(false);
+    }
+
+    setDate(val)
   }
 
   return (
@@ -19,7 +33,7 @@ const AddEditWeight = (props) => {
           placeholder="Date of weight"
           value={date}
           max={maxDate()}
-          onInput={e => setDate(e.target.value)} />
+          onInput={e => checkIfExists(e.target.value)} />
         <label htmlFor="date" className="form-group__label">Date</label>
       </div>
       <div className="form-group">
@@ -35,7 +49,10 @@ const AddEditWeight = (props) => {
 
       <div className={style['add-edit-weight__actions']}>
         <div onClick={updateFN} className="btn btn--block btn--primary">Update</div>
-        <div onClick={cancelFN} className="btn btn--block btn--secondary">cancel</div>
+        {alreadyExists && (
+          <div onClick={() => deleteFN(date)} className="btn btn--block btn--danger">Delete</div>
+        )}
+        <div onClick={cancelFN} className="btn btn--block btn--secondary">Cancel</div>
       </div>
     </form>
   );

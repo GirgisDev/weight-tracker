@@ -8,17 +8,36 @@ const WeightTimeline = () => {
   const storageKeyName = 'weight-data';
 
   const getUserData = () => JSON.parse(localStorage.getItem(storageKeyName) || '{}');
+  const getFormattedUserData = () => {
+    let formattedData = {};
+    Object.keys(getUserData())?.forEach(key => {
+      formattedData[new Date(parseInt(key)).toLocaleDateString()] = getUserData()[key];
+    });
 
-  const getWeightDates = () => Object.keys(getUserData()).length 
-    ? Object.keys(getUserData()).map(key => new Date(parseInt(key)).toLocaleDateString()) 
+    return formattedData;
+  } 
+
+  const getWeightDates = () => Object.keys(getUserData()).length
+    ? Object.keys(getUserData()).map(key => new Date(parseInt(key)).toLocaleDateString())
     : [];
-  const getWeights = () => Object.keys(getUserData()).length 
-    ? Object.keys(getUserData()).map(key => getUserData()[key]) 
+  const getWeights = () => Object.keys(getUserData()).length
+    ? Object.keys(getUserData()).map(key => getUserData()[key])
     : [];
 
   const getWeightChartOptions = () => ({
     chart: { id: "weight-timeline" },
-    xaxis: { categories: getWeightDates() }
+    stroke: { curve: 'smooth' },
+    legend: {
+      show: true, position: 'bottom', horizontalAlign: 'center', showForSingleSeries: true,
+      customLegendItems: ['Weight on specific date'],
+    },
+    markers: {
+      size: 2, strokeColors: '#fff', strokeWidth: 2, strokeOpacity: 0.9,
+      fillOpacity: 1, shape: "circle", radius: 5, hover: { sizeOffset: 6, },
+    },
+    xaxis: {
+      categories: getWeightDates()
+    }
   })
   const getWeightChartSeries = () => ([{
     name: 'Weight in KG', data: getWeights()
@@ -56,6 +75,16 @@ const WeightTimeline = () => {
     resetInputFields();
   }
 
+  const deleteWeight = date => {
+    const timeKey = new Date(date).getTime();
+    const { [timeKey]: weight, ...weightData } = getUserData();
+    localStorage.setItem(storageKeyName, JSON.stringify(weightData));
+
+    updateChart();
+    toggleAddEdit(false);
+    resetInputFields();
+  }
+
   return (
     <div className={style['weight-timeline']}>
       <h2 className="_text-center">Weight tracker</h2>
@@ -71,10 +100,13 @@ const WeightTimeline = () => {
 
       {addEdit && (
         <SlideFromRightLayout cancelFN={() => toggleAddEdit(false)}>
-          <AddEditWeight 
+          <AddEditWeight
             weight={weight} setWeight={setWeight}
             date={date} setDate={setDate}
-            updateFN={addWeight} cancelFN={() => toggleAddEdit(false)} />
+            currentData={getFormattedUserData()}
+            updateFN={addWeight} 
+            deleteFN={deleteWeight}
+            cancelFN={() => toggleAddEdit(false)} />
         </SlideFromRightLayout>
       )}
     </div>
